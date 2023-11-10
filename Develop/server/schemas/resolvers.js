@@ -61,10 +61,34 @@ module.exports = {
     res.json({ token, user });
 
       },
-      saveBook: (parent, args, context, info) => {
+      saveBook: async (parent, { _id, book }, context, info) => {
+    try {
+      const updatedUser = await User.findOneAndUpdate(
+        { _id },
+        { $addToSet: { savedBooks: body } },
+        { new: true, runValidators: true }
+      );
+      return updatedUser
+    } catch (err) {
+      console.log(err);
+      throw GraphQLError('Error saving book')
+    }
 
       },
-      deleteBook: (parent, args, context, info) => {
+      deleteBook: async (parent, {_id, bookId }, context, info) => {
+          const updatedUser = await User.findOneAndUpdate(
+            { _id},
+            { $pull: { savedBooks: { bookId } } },
+            { new: true }
+          );
+          if (!updatedUser) {
+            throw new GraphQLError("Couldn't find user with this id!", {
+              extensions: {
+                code: USER_NOT_FOUND
+              }
+            })
+          }
+          return updatedUser;
 
       },
     }
