@@ -1,4 +1,4 @@
-import { gql } from 'graphql'
+import { gql } from '@apollo/client'
 
 export const GET_SINGLE_USER = gql `
     query GetSingleUser($username: String, $_id: ID) {

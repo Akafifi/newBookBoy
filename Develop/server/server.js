@@ -4,7 +4,8 @@ const db = require('./config/connection');
 // const routes = require('./routes');
 const { ApolloServer } = require('@apollo/server')
 const { expressMiddleware } = require('@apollo/server/express4')
-const { typeDefs, resolvers } = require('./schemas')
+const { typeDefs, resolvers } = require('./schemas');
+const { authMiddleware } = require('./utils/auth');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -29,7 +30,7 @@ db.once('open', async() => {
   await apolloServer.start()
 
   app.use('/graphql', expressMiddleware(apolloServer, {
-    context: async ({ req }) =>
+    context: authMiddleware
   }))
 
   app.listen(PORT, () => console.log(`🌍 Now listening on localhost:${PORT}`));
